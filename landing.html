@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Broadcast Brilliance — Professional TV News Production</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background: #070b12; color: #e2e8f0; min-height: 100vh; }
+    a { color: #38bdf8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .wrap { max-width: 880px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+    header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem 1.25rem; border-bottom: 1px solid #1e2a3a; background: #0c1220; position: sticky; top: 0; z-index: 10; }
+    .brand { display: flex; align-items: center; gap: 0.75rem; }
+    .logo { width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, #3b82f6, #22d3ee); display: flex; align-items: center; justify-content: center; font-weight: 800; color: #fff; font-size: 12px; }
+    nav { display: flex; flex-wrap: wrap; gap: 0.75rem 1rem; font-size: 13px; }
+    nav a { color: #94a3b8; }
+    nav a:hover { color: #e2e8f0; }
+    h1 { font-size: 1.75rem; margin: 0 0 0.5rem; color: #fff; }
+    h2 { font-size: 1.15rem; margin: 2rem 0 0.75rem; color: #f1f5f9; }
+    p, li { line-height: 1.65; color: #cbd5e1; font-size: 15px; }
+    .muted { color: #64748b; font-size: 13px; }
+    .card { background: #0f1520; border: 1px solid #1e2a3a; border-radius: 12px; padding: 1.25rem 1.5rem; margin: 1.25rem 0; }
+    .btn { display: inline-block; padding: 0.65rem 1.25rem; border-radius: 8px; font-weight: 600; font-size: 14px; border: none; cursor: pointer; text-decoration: none !important; }
+    .btn-primary { background: #2563eb; color: #fff !important; }
+    .btn-primary:hover { background: #1d4ed8; }
+    .btn-ghost { background: #131a28; color: #e2e8f0 !important; border: 1px solid #2a3a4f; }
+    footer { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid #1e2a3a; font-size: 12px; color: #64748b; }
+    footer a { color: #94a3b8; margin-right: 1rem; }
+
+    .hero { padding: 3rem 0 1rem; }
+    .hero h1 { font-size: 2.25rem; letter-spacing: -0.02em; }
+    .hero .lead { font-size: 1.1rem; color: #94a3b8; max-width: 36rem; }
+    .actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem; margin-top: 2rem; }
+    .grid .card h3 { margin: 0 0 0.35rem; font-size: 14px; color: #fff; }
+    .grid .card p { margin: 0; font-size: 13px; color: #94a3b8; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo">BB</div>
+      <div>
+        <div style="font-weight:700;color:#fff;font-size:14px;">BROADCAST BRILLIANCE</div>
+        <div class="muted">Professional Broadcast Studio</div>
+      </div>
+    </div>
+    <nav>
+      <a href="landing.html">Home</a>
+      <a href="index.html">Open Studio</a>
+      <a href="terms.html">Terms</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="guest.html">Guest join</a>
+      <a href="remote.html">Remote camera</a>
+    </nav>
+  </header>
+  <div class="wrap">
+    <section class="hero">
+      <p class="muted" style="text-transform:uppercase;letter-spacing:0.08em;font-weight:600;color:#38bdf8;">Browser-based TV production</p>
+      <h1>One Program output.<br/>Full control room in the browser.</h1>
+      <p class="lead">Manage sources, guests, graphics, ads, rundown, and destinations through a single Program Engine — designed like a compact broadcast facility, not a pile of demos.</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="index.html">Enter Studio</a>
+        <a class="btn btn-ghost" href="terms.html">Terms of Service</a>
+        <a class="btn btn-ghost" href="privacy.html">Privacy Policy</a>
+      </div>
+    </section>
+    <div class="grid">
+      <div class="card"><h3>Studio &amp; switcher</h3><p>Preview / Program, TAKE, layouts, priority stack.</p></div>
+      <div class="card"><h3>Sources &amp; guests</h3><p>Cameras, screen, media, YouTube embeds, guest tiers.</p></div>
+      <div class="card"><h3>News Director</h3><p>Rundown, Timed Auto Director, operator notes.</p></div>
+      <div class="card"><h3>Honest media status</h3><p>Local capture &amp; record; encoder/RTMP only when connected.</p></div>
+    </div>
+    <div class="card" style="margin-top:2rem;">
+      <h2 style="margin-top:0;">App link &amp; redirects</h2>
+      <p>Share this deployment’s origin with your team. Typical paths:</p>
+      <ul>
+        <li><strong>Public home:</strong> <code>landing.html</code></li>
+        <li><strong>Application:</strong> <code>index.html</code></li>
+        <li><strong>Terms:</strong> <code>terms.html</code></li>
+        <li><strong>Privacy:</strong> <code>privacy.html</code></li>
+        <li><strong>Future auth callback:</strong> <code>/auth/callback</code> (when Supabase Auth is enabled)</li>
+      </ul>
+      <p class="muted">Host this folder on HTTPS for camera/mic and sharing outside localhost.</p>
+    </div>
+    <footer>
+      <a href="landing.html">Home</a>
+      <a href="index.html">Studio</a>
+      <a href="terms.html">Terms</a>
+      <a href="privacy.html">Privacy</a>
+      <span>© 2026 Broadcast Brilliance</span>
+    </footer>
+  </div>
+</body>
+</html>
