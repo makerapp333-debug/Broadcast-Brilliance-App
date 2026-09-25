@@ -1,4 +1,4 @@
-// BROADCAST BRILLIANCE v2.0.3 — Monitors fill full area (no letterbox gaps)
+// BROADCAST BRILLIANCE v2.0.4 — Program on-air overlays match Preview reference
 // getUserMedia → canvas compositor → MediaRecorder
 // Optional screen share · Encoder / RTMP remain NOT CONNECTED
 
@@ -156,7 +156,7 @@ const state = {
   graphics: {
     lt: {
       enabled: true,
-      template: 'breaking_pro',
+      template: 'onair_green',
       title: 'GOVERNMENT UNVEILS NEW ECONOMIC PLAN',
       subtitle: 'Officials say the plan will create jobs, boost trade and drive growth',
       ribbon: 'BREAKING NEWS',
@@ -1994,7 +1994,15 @@ function renderLowerThird() {
   const logo = ltLogoHTML(g);
   let html = '';
 
-  if (t === 'news_update') {
+  if (t === 'onair_green') {
+    const chName = (g.logo && g.logo.text) ? g.logo.text : 'NEWS ROOM TV';
+    html = '<div class="lt-root lt-t-onair_green"><div class="lt-bar">' +
+      '<span class="lt-channel">' + chName + '</span>' +
+      '<div class="min-w-0 flex-1" style="min-width:0">' +
+        '<div class="lt-title">' + (g.lt.title || '') + '</div>' +
+        (g.lt.subtitle ? '<div class="lt-sub">' + g.lt.subtitle + '</div>' : '') +
+      '</div></div></div>';
+  } else if (t === 'news_update') {
     html = '<div class="lt-root lt-t-news_update"><div class="lt-bar">' +
       '<div class="lt-badge" style="background:' + (c.badgeBg || c.accent || '#16a34a') + '"><span>NEWS</span><span>UPDATE</span></div>' +
       '<div class="lt-body" style="background:' + (c.titleBg || '#fff') + '">' + logo +
@@ -2077,10 +2085,36 @@ function applyGraphicsToProgram() {
   });
   const loc = document.getElementById('gfx-loc-text');
   const logo = document.getElementById('gfx-logo-text');
+  const logoImg = document.getElementById('gfx-logo-img');
   if (loc) loc.textContent = (g.loc && g.loc.text) || '';
-  if (logo) logo.textContent = (g.logo && g.logo.text) || '';
+  // Circular logo badge: image if uploaded, else short channel initials
+  const logoUrl = (g.lt && g.lt.logoUrl) || null;
+  if (logoImg) {
+    if (logoUrl) {
+      logoImg.src = logoUrl;
+      logoImg.classList.remove('hidden');
+      if (logo) logo.classList.add('hidden');
+    } else {
+      logoImg.removeAttribute('src');
+      logoImg.classList.add('hidden');
+      if (logo) {
+        logo.classList.remove('hidden');
+        const raw = (g.logo && g.logo.text) || 'NR';
+        const parts = raw.replace(/[^a-zA-Z0-9 ]/g, ' ').trim().split(/\s+/).filter(Boolean);
+        logo.textContent = parts.length >= 2 ? (parts[0][0] + parts[1][0]).toUpperCase() : raw.slice(0, 2).toUpperCase();
+      }
+    }
+  } else if (logo) {
+    logo.textContent = (g.logo && g.logo.text) || '';
+  }
   renderLowerThird();
-  renderTickerStrip();
+  // Keep ticker off Program when using solid on-air green bar
+  const tickHost = document.getElementById('gfx-ticker');
+  if (tickHost && g.lt && g.lt.template === 'onair_green') {
+    tickHost.style.display = 'none';
+  } else {
+    renderTickerStrip();
+  }
   tickProgramClock();
 }
 
