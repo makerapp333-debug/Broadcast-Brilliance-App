@@ -1,4 +1,4 @@
-// BROADCAST BRILLIANCE v2.0.2 — Sidebar clicks fixed (delegation + pointer-events)
+// BROADCAST BRILLIANCE v2.0.3 — Monitors fill full area (no letterbox gaps)
 // getUserMedia → canvas compositor → MediaRecorder
 // Optional screen share · Encoder / RTMP remain NOT CONNECTED
 
@@ -550,20 +550,23 @@ function stopScreenShare() {
 
 
 function sizeMonitorFrames() {
+  // Fill the entire Preview/Program monitors — no letterbox bars
   ['preview-monitor', 'program-monitor'].forEach(mid => {
+    const mon = document.getElementById(mid);
     const stage = document.querySelector('#' + mid + ' .monitor-stage');
     const frame = document.querySelector('#' + mid + ' .monitor-frame');
-    if (!stage || !frame) return;
-    const rw = stage.clientWidth;
-    const rh = stage.clientHeight;
+    if (!mon || !stage || !frame) return;
+    const rw = mon.clientWidth;
+    const rh = mon.clientHeight;
     if (rw < 32 || rh < 32) return;
-    // Largest 16:9 rect that fits in stage
-    let w = rw, h = rw * 9 / 16;
-    if (h > rh) { h = rh; w = rh * 16 / 9; }
-    frame.style.width = Math.floor(w) + 'px';
-    frame.style.height = Math.floor(h) + 'px';
+    stage.style.width = '100%';
+    stage.style.height = '100%';
+    frame.style.width = '100%';
+    frame.style.height = '100%';
+    frame.style.maxWidth = 'none';
+    frame.style.maxHeight = 'none';
   });
-  // Match canvas internal resolution to visible frame
+  // Canvas resolution matches the filled program frame
   const frame = document.getElementById('program-frame');
   const canvas = document.getElementById('program-canvas');
   if (frame && canvas) {
@@ -580,18 +583,10 @@ function resizeProgramCanvas() {
   const canvas = document.getElementById('program-canvas');
   const frame = document.getElementById('program-frame') || document.getElementById('program-monitor');
   if (!canvas || !frame) return;
+  if (typeof sizeMonitorFrames === 'function') sizeMonitorFrames();
   const rect = frame.getBoundingClientRect();
-  // Prefer true 16:9 raster matching the on-screen frame
-  let w = Math.max(320, Math.floor(rect.width) || 640);
-  let h = Math.max(180, Math.floor(rect.height) || 360);
-  if (w > 0 && h > 0) {
-    const target = 16 / 9;
-    const cur = w / h;
-    if (Math.abs(cur - target) > 0.02) {
-      // lock raster to 16:9
-      h = Math.round(w / target);
-    }
-  }
+  const w = Math.max(320, Math.floor(rect.width) || 640);
+  const h = Math.max(180, Math.floor(rect.height) || 360);
   if (canvas.width !== w || canvas.height !== h) {
     canvas.width = w;
     canvas.height = h;
