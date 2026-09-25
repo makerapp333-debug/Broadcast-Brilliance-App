@@ -45,15 +45,34 @@
       display: block !important;
       visibility: visible !important;
     }
-    .app-sidebar nav button {
+    .app-sidebar,
+    .app-sidebar * {
+      pointer-events: auto !important;
+    }
+    .app-sidebar nav button,
+    .app-sidebar nav button * {
       display: flex !important;
       width: 100%;
       text-align: left;
       background: transparent;
       border: none;
-      cursor: pointer;
+      cursor: pointer !important;
       color: #94a3b8;
+      pointer-events: auto !important;
+      position: relative;
+      z-index: 2;
     }
+    .app-sidebar nav button:hover {
+      background: #131a28 !important;
+      color: #e2e8f0 !important;
+    }
+    .app-main {
+      position: relative;
+      z-index: 1;
+    }
+    .view-page.hidden { display: none !important; }
+    .view-page:not(.hidden) { display: flex !important; flex-direction: column; }
+
     .app-sidebar .sidebar-footer { flex: 0 0 auto; border-top: 1px solid #1e2a3a; }
     .app-sidebar .sidebar-status { flex: 0 0 auto; }
     .app-main {
@@ -388,20 +407,19 @@
       </div>
     </div>
     <nav id="nav">
-      <!-- Fallback until app.js renderNav() runs -->
-      <button type="button" data-nav="home" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-slate-400">⌂ Home</button>
-      <button type="button" data-nav="studio" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] nav-active">▣ Studio</button>
-      <button type="button" data-nav="news" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-slate-400">🎬 News Director</button>
-      <button type="button" data-nav="sources" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-slate-400">📡 Sources</button>
-      <button type="button" data-nav="ads" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-slate-400">📢 Ads</button>
-      <button type="button" data-nav="graphics" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-slate-400">🗂 Graphics</button>
-      <button type="button" data-nav="guests" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-slate-400">👥 Guests</button>
-      <button type="button" data-nav="destinations" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-slate-400">📤 Destinations</button>
-      <button type="button" data-nav="analytics" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-slate-400">📊 Analytics</button>
-      <button type="button" data-nav="audio" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-slate-400">🔊 Audio</button>
-      <button type="button" data-nav="recordings" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-slate-400">🎞 Recordings</button>
-      <button type="button" data-nav="users" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-slate-400">👤 Users</button>
-      <button type="button" data-nav="settings" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-slate-400">⚙ Settings</button>
+      <button type="button" data-nav="home" onclick="navigateTo('home')" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-slate-400">⌂ <span>Home</span></button>
+      <button type="button" data-nav="studio" onclick="navigateTo('studio')" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] nav-active">▣ <span>Studio</span></button>
+      <button type="button" data-nav="news" onclick="navigateTo('news')" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-slate-400">🎬 <span>News Director</span></button>
+      <button type="button" data-nav="sources" onclick="navigateTo('sources')" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-slate-400">📡 <span>Sources</span></button>
+      <button type="button" data-nav="ads" onclick="navigateTo('ads')" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-slate-400">📢 <span>Ads</span></button>
+      <button type="button" data-nav="graphics" onclick="navigateTo('graphics')" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-slate-400">🗂 <span>Graphics</span></button>
+      <button type="button" data-nav="guests" onclick="navigateTo('guests')" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-slate-400">👥 <span>Guests</span></button>
+      <button type="button" data-nav="destinations" onclick="navigateTo('destinations')" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-slate-400">📤 <span>Destinations</span></button>
+      <button type="button" data-nav="analytics" onclick="navigateTo('analytics')" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-slate-400">📊 <span>Analytics</span></button>
+      <button type="button" data-nav="audio" onclick="navigateTo('audio')" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-slate-400">🔊 <span>Audio</span></button>
+      <button type="button" data-nav="recordings" onclick="navigateTo('recordings')" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-slate-400">🎞 <span>Recordings</span></button>
+      <button type="button" data-nav="users" onclick="navigateTo('users')" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-slate-400">👤 <span>Users</span></button>
+      <button type="button" data-nav="settings" onclick="navigateTo('settings')" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-slate-400">⚙ <span>Settings</span></button>
     </nav>
     <div class="sidebar-footer p-2 space-y-1">
       <div class="text-[9px] uppercase tracking-wider text-slate-500 px-1 mb-1">Quick Actions</div>
@@ -416,7 +434,7 @@
       <div id="sidebar-media" class="px-1.5 py-1.5 rounded bg-amber-950/60 border border-amber-700/60 text-amber-300 text-[9px] font-semibold leading-tight">
         MEDIA ENGINE<br><span id="sidebar-media-sub" class="text-amber-200">LOCAL ONLY</span>
       </div>
-      <div>v2.0.1</div>
+      <div>v2.0.2</div>
       <div class="mt-1 flex flex-wrap gap-2 text-[9px]">
         <a href="landing.html" class="text-slate-500 hover:text-slate-300">Public home</a>
         <a href="terms.html" class="text-slate-500 hover:text-slate-300">Terms</a>
