@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Privacy Policy — Broadcast Brilliance</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background: #070b12; color: #e2e8f0; min-height: 100vh; }
+    a { color: #38bdf8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .wrap { max-width: 880px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+    header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem 1.25rem; border-bottom: 1px solid #1e2a3a; background: #0c1220; position: sticky; top: 0; z-index: 10; }
+    .brand { display: flex; align-items: center; gap: 0.75rem; }
+    .logo { width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, #3b82f6, #22d3ee); display: flex; align-items: center; justify-content: center; font-weight: 800; color: #fff; font-size: 12px; }
+    nav { display: flex; flex-wrap: wrap; gap: 0.75rem 1rem; font-size: 13px; }
+    nav a { color: #94a3b8; }
+    nav a:hover { color: #e2e8f0; }
+    h1 { font-size: 1.75rem; margin: 0 0 0.5rem; color: #fff; }
+    h2 { font-size: 1.15rem; margin: 2rem 0 0.75rem; color: #f1f5f9; }
+    p, li { line-height: 1.65; color: #cbd5e1; font-size: 15px; }
+    .muted { color: #64748b; font-size: 13px; }
+    .card { background: #0f1520; border: 1px solid #1e2a3a; border-radius: 12px; padding: 1.25rem 1.5rem; margin: 1.25rem 0; }
+    .btn { display: inline-block; padding: 0.65rem 1.25rem; border-radius: 8px; font-weight: 600; font-size: 14px; border: none; cursor: pointer; text-decoration: none !important; }
+    .btn-primary { background: #2563eb; color: #fff !important; }
+    .btn-primary:hover { background: #1d4ed8; }
+    .btn-ghost { background: #131a28; color: #e2e8f0 !important; border: 1px solid #2a3a4f; }
+    footer { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid #1e2a3a; font-size: 12px; color: #64748b; }
+    footer a { color: #94a3b8; margin-right: 1rem; }
+</style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo">BB</div>
+      <div>
+        <div style="font-weight:700;color:#fff;font-size:14px;">BROADCAST BRILLIANCE</div>
+        <div class="muted">Privacy Policy</div>
+      </div>
+    </div>
+    <nav>
+      <a href="landing.html">Home</a>
+      <a href="index.html">Open Studio</a>
+      <a href="terms.html">Terms</a>
+      <a href="privacy.html">Privacy</a>
+    </nav>
+  </header>
+  <div class="wrap">
+    <h1>Privacy Policy</h1>
+    <p class="muted">Last updated: 23 September 2026 · Describes intended practices for the Broadcast Brilliance application. Adjust for your deployment and legal requirements before production use.</p>
+
+    <h2>1. Who this applies to</h2>
+    <p>This policy describes how a deployment of Broadcast Brilliance may process information about operators, guests, and visitors of the public pages.</p>
+
+    <h2>2. Information we process</h2>
+    <ul>
+      <li><strong>Operational data:</strong> production state, source names, rundown items, graphics text, ad schedule metadata, audit-style event logs stored in the browser session or operator backend when connected.</li>
+      <li><strong>Media:</strong> camera, microphone, and screen capture when you grant browser permission; uploaded media files; guest media when WebRTC or similar is enabled.</li>
+      <li><strong>Account data (when Auth is connected):</strong> email, name, role — via DigitalOcean-hosted app auth and Postgres when connected.</li>
+      <li><strong>Technical data:</strong> IP address, device/browser type, and logs if a server is deployed.</li>
+    </ul>
+
+    <h2>3. How we use information</h2>
+    <p>To run the production studio, switch Program output, manage guests and ads, improve reliability, and meet legal obligations. Local laboratory mode may keep most data only in your browser (e.g. localStorage, in-memory state, local recordings).</p>
+
+    <h2>4. Sharing</h2>
+    <p>Program output may be sent to destinations you configure (e.g. YouTube, Facebook, custom RTMP) when those features are connected. Guest links and remote tokens should only be shared with intended participants. We do not sell personal information.</p>
+
+    <h2>5. Cookies and local storage</h2>
+    <p>The application may use browser local storage for settings, destination form drafts, and similar preferences. Essential technical storage may be required for the app to function.</p>
+
+    <h2>6. Retention</h2>
+    <p>Session audit logs and notifications may be ephemeral. Recordings and uploaded assets are retained according to how the operator configures storage (local download vs cloud). Delete or export according to your operational policy.</p>
+
+    <h2>7. Security</h2>
+    <p>Use HTTPS in production. Protect stream keys and guest tokens. Server-side authorization and role-based access are planned when DigitalOcean Postgres + app auth are connected; until then, treat the studio as a trusted-operator environment.</p>
+
+    <h2>8. Your choices</h2>
+    <p>You can deny camera/microphone/screen permissions in the browser. Contact the operator of your instance to request access changes or deletion of account data once accounts exist.</p>
+
+    <h2>9. International transfers</h2>
+    <p>If the operator hosts infrastructure in other regions, data may be processed there. The operator should document sub-processors for production deployments.</p>
+
+    <h2>10. Contact</h2>
+    <p>Privacy requests should be directed to the operator of your Broadcast Brilliance deployment.</p>
+
+    <footer>
+      <a href="landing.html">Home</a>
+      <a href="index.html">Studio</a>
+      <a href="terms.html">Terms</a>
+      <a href="privacy.html">Privacy</a>
+    </footer>
+  </div>
+</body>
+</html>
