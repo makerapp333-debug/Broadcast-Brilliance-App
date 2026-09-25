@@ -177,6 +177,7 @@
       display: block; z-index: 1;
     }
     /* Graphics sit only inside the 16:9 program-frame */
+    /* Program-only on-air overlays (Preview untouched) */
     .gfx-loc-pill {
       position: absolute; z-index: 14; top: 3.2%; left: 2.2%;
       display: flex; align-items: center; gap: 5px;
@@ -191,6 +192,32 @@
       background: #dc2626; color: #fff; font-size: clamp(9px, 1.1vw, 12px); font-weight: 800;
       box-shadow: 0 2px 10px rgba(220,38,38,0.5);
     }
+    /* Logo = circular badge upper-middle of Program video (watch-icon position in reference) */
+    #program-frame .gfx-logo-pill {
+      position: absolute; z-index: 16;
+      top: 34%; left: 50%; right: auto;
+      transform: translate(-50%, -50%);
+      width: clamp(40px, 9%, 56px);
+      height: clamp(40px, 9%, 56px);
+      padding: 0;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.95);
+      border: 2px solid rgba(255,255,255,0.9);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.45);
+      color: #0f172a;
+      font-size: clamp(8px, 1.2vw, 11px); font-weight: 900; letter-spacing: 0.02em;
+      overflow: hidden;
+    }
+    #program-frame .gfx-logo-pill img {
+      width: 100%; height: 100%; object-fit: cover; border-radius: 50%;
+    }
+    #program-frame .gfx-logo-pill #gfx-logo-text {
+      max-width: 90%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      text-align: center; line-height: 1.05; padding: 2px;
+      color: #0f172a;
+    }
+    /* Fallback if logo pill used outside program */
     .gfx-logo-pill {
       position: absolute; z-index: 14; top: 3.2%; right: 5.5rem;
       display: flex; align-items: center; gap: 4px;
@@ -198,12 +225,63 @@
       background: rgba(0,0,0,0.55); color: #fff;
       font-size: clamp(9px, 1.1vw, 12px); font-weight: 800; letter-spacing: 0.05em;
     }
+    /* Clock sits on green bar, not floating mid-frame */
+    #program-frame .gfx-clock-pill {
+      position: absolute; z-index: 17;
+      bottom: 3.2%; right: 3%;
+      padding: 3px 8px; border-radius: 3px;
+      background: rgba(0,0,0,0.55);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: #fff; font-size: clamp(10px, 1.15vw, 12px);
+      font-family: ui-monospace, monospace; font-weight: 700;
+    }
     .gfx-clock-pill {
       position: absolute; z-index: 15; bottom: 9.5%; right: 1.8%;
       padding: 5px 10px; border-radius: 4px;
       background: rgba(15,23,42,0.92); border: 1px solid rgba(56,189,248,0.4);
       color: #e2e8f0; font-size: clamp(11px, 1.3vw, 14px);
       font-family: ui-monospace, monospace; font-weight: 700;
+    }
+    /* Solid green lower-third bar locked to bottom of Program video */
+    #program-frame .gfx-lt-box {
+      position: absolute; z-index: 15;
+      left: 3%; right: 3%;
+      bottom: 2.5%;
+      width: auto;
+      pointer-events: none;
+    }
+    #program-frame .lt-t-onair_green .lt-bar {
+      display: flex; align-items: center; gap: 10px;
+      width: 100%;
+      min-height: clamp(28px, 11%, 42px);
+      padding: 6px 12px;
+      border-radius: 4px;
+      background: #16a34a;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.35);
+    }
+    #program-frame .lt-t-onair_green .lt-channel {
+      font-size: clamp(11px, 1.4vw, 15px);
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+    #program-frame .lt-t-onair_green .lt-title {
+      font-size: clamp(10px, 1.25vw, 13px);
+      font-weight: 700;
+      color: #f0fdf4;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    #program-frame .lt-t-onair_green .lt-sub {
+      font-size: clamp(9px, 1.05vw, 11px);
+      font-weight: 600;
+      color: rgba(240,253,244,0.9);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .gfx-lt-box {
       position: absolute; z-index: 13;
@@ -333,6 +411,9 @@
     .lt-t-minimal_name .lt-title { font-size: clamp(14px, 1.7vw, 20px); font-weight: 800; color: #fff; }
     .lt-t-minimal_name .lt-sub { font-size: clamp(10px, 1.1vw, 12px); color: rgba(255,255,255,0.85); }
     /* Ticker strip variants */
+    #program-frame .gfx-ticker-box {
+      display: none !important; /* on-air green bar replaces ticker strip for clean Program look */
+    }
     .gfx-ticker-box {
       position: absolute; left: 0; right: 0; bottom: 0; z-index: 14;
       height: 7.2%; min-height: 24px; max-height: 34px;
@@ -443,7 +524,7 @@
       <div id="sidebar-media" class="px-1.5 py-1.5 rounded bg-amber-950/60 border border-amber-700/60 text-amber-300 text-[9px] font-semibold leading-tight">
         MEDIA ENGINE<br><span id="sidebar-media-sub" class="text-amber-200">LOCAL ONLY</span>
       </div>
-      <div>v2.0.3</div>
+      <div>v2.0.4</div>
       <div class="mt-1 flex flex-wrap gap-2 text-[9px]">
         <a href="landing.html" class="text-slate-500 hover:text-slate-300">Public home</a>
         <a href="terms.html" class="text-slate-500 hover:text-slate-300">Terms</a>
@@ -526,7 +607,7 @@
                 <canvas id="program-canvas" class="program-canvas"></canvas>
                 <div id="program-content" class="absolute inset-0 pointer-events-none"></div>
                 <div id="gfx-location" class="gfx-loc-pill"><span style="color:#f87171">📍</span> <span id="gfx-loc-text">NAIROBI</span></div>
-                <div id="gfx-logo" class="gfx-logo-pill"><span style="opacity:0.9">🌐</span> <span id="gfx-logo-text">NEWS ROOM TV</span></div>
+                <div id="gfx-logo" class="gfx-logo-pill"><img id="gfx-logo-img" class="hidden" alt="" /><span id="gfx-logo-text">NR</span></div>
                 <div id="gfx-live" class="gfx-live-pill"><span class="w-1.5 h-1.5 rounded-full bg-white live-dot"></span> LIVE</div>
                 <div id="gfx-breaking" class="gfx-breaking-box"><span id="gfx-breaking-text" class="hidden">KENYA LAUNCHES NEW ECONOMIC REFORMS</span></div>
                 <div id="gfx-lowerthird" class="gfx-lt-box"><!-- rendered by renderLowerThird() --></div>
