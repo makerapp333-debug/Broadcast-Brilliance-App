@@ -15,20 +15,47 @@
     /* ===== APP SHELL — never collapse sidebar or main ===== */
     .app-shell { display: flex; height: 100vh; width: 100vw; overflow: hidden; }
     .app-sidebar {
-      width: 168px; min-width: 168px; max-width: 168px;
-      flex: 0 0 168px;
-      display: flex; flex-direction: column;
-      background: #0c1220; border-right: 1px solid #1e2a3a;
+      width: 168px !important;
+      min-width: 168px !important;
+      max-width: 168px !important;
+      flex: 0 0 168px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      background: #0c1220 !important;
+      border-right: 1px solid #1e2a3a;
       overflow: hidden;
+      position: relative;
+      z-index: 40;
+      visibility: visible !important;
+      opacity: 1 !important;
     }
+    .app-sidebar .sidebar-brand {
+      flex: 0 0 auto;
+      padding: 10px 10px 8px;
+      border-bottom: 1px solid #1e2a3a;
+    }
+    .app-sidebar nav#nav,
     .app-sidebar nav {
-      flex: 1 1 auto;
-      min-height: 120px;
-      overflow-y: auto;
+      flex: 1 1 auto !important;
+      min-height: 160px !important;
+      max-height: none;
+      overflow-y: auto !important;
       overflow-x: hidden;
       padding: 6px 0;
+      display: block !important;
+      visibility: visible !important;
+    }
+    .app-sidebar nav button {
+      display: flex !important;
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: #94a3b8;
     }
     .app-sidebar .sidebar-footer { flex: 0 0 auto; border-top: 1px solid #1e2a3a; }
+    .app-sidebar .sidebar-status { flex: 0 0 auto; }
     .app-main {
       flex: 1 1 auto;
       min-width: 0;
@@ -350,8 +377,32 @@
   </style>
 </head>
 <body class="app-shell">
-  <aside class="app-sidebar">
-    <nav id="nav"></nav>
+  <aside class="app-sidebar" id="app-sidebar">
+    <div class="sidebar-brand">
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded bg-blue-600 flex items-center justify-center text-white text-[10px] font-black">BB</div>
+        <div class="min-w-0 leading-tight">
+          <div class="text-[11px] font-bold text-white truncate">BROADCAST</div>
+          <div class="text-[9px] text-slate-400 truncate">BRILLIANCE</div>
+        </div>
+      </div>
+    </div>
+    <nav id="nav">
+      <!-- Fallback until app.js renderNav() runs -->
+      <button type="button" data-nav="home" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-slate-400">⌂ Home</button>
+      <button type="button" data-nav="studio" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] nav-active">▣ Studio</button>
+      <button type="button" data-nav="news" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-slate-400">🎬 News Director</button>
+      <button type="button" data-nav="sources" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-slate-400">📡 Sources</button>
+      <button type="button" data-nav="ads" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-slate-400">📢 Ads</button>
+      <button type="button" data-nav="graphics" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-slate-400">🗂 Graphics</button>
+      <button type="button" data-nav="guests" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-slate-400">👥 Guests</button>
+      <button type="button" data-nav="destinations" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-slate-400">📤 Destinations</button>
+      <button type="button" data-nav="analytics" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-slate-400">📊 Analytics</button>
+      <button type="button" data-nav="audio" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-slate-400">🔊 Audio</button>
+      <button type="button" data-nav="recordings" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-slate-400">🎞 Recordings</button>
+      <button type="button" data-nav="users" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-slate-400">👤 Users</button>
+      <button type="button" data-nav="settings" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] text-slate-400">⚙ Settings</button>
+    </nav>
     <div class="sidebar-footer p-2 space-y-1">
       <div class="text-[9px] uppercase tracking-wider text-slate-500 px-1 mb-1">Quick Actions</div>
       <button onclick="doTake()" class="w-full flex items-center gap-2 px-2.5 py-1.5 rounded bg-green-600 hover:bg-green-500 text-white text-[11px] font-semibold"><span>▶</span> TAKE</button>
@@ -360,12 +411,12 @@
       <button onclick="toggleLocalRecord()" id="btn-rec" class="w-full flex items-center gap-2 px-2.5 py-1.5 rounded bg-red-700 hover:bg-red-600 text-white text-[11px] font-semibold"><span>●</span> Local Rec</button>
       <button onclick="toggleEmergency()" id="btn-emergency" class="w-full flex items-center gap-2 px-2.5 py-1.5 rounded bg-red-800 hover:bg-red-700 text-white text-[11px] font-semibold"><span>⚠</span> Emergency</button>
     </div>
-    <div class="p-2 border-t border-[#1e2a3a] text-[10px] text-slate-500 space-y-1">
+    <div class="sidebar-status p-2 border-t border-[#1e2a3a] text-[10px] text-slate-500 space-y-1">
       <div class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> System Online</div>
       <div id="sidebar-media" class="px-1.5 py-1.5 rounded bg-amber-950/60 border border-amber-700/60 text-amber-300 text-[9px] font-semibold leading-tight">
         MEDIA ENGINE<br><span id="sidebar-media-sub" class="text-amber-200">LOCAL ONLY</span>
       </div>
-      <div>v2.0.0</div>
+      <div>v2.0.1</div>
       <div class="mt-1 flex flex-wrap gap-2 text-[9px]">
         <a href="landing.html" class="text-slate-500 hover:text-slate-300">Public home</a>
         <a href="terms.html" class="text-slate-500 hover:text-slate-300">Terms</a>
@@ -1280,7 +1331,7 @@
           <div class="bg-[#0f1520] border border-[#1e2a3a] rounded-lg p-3 space-y-2">
             <div class="text-[12px] font-bold text-white mb-1">System</div>
             <div class="text-[11px] space-y-1">
-              <div class="flex justify-between px-2 py-1.5 rounded bg-[#131a28]"><span class="text-slate-500">App version</span><span class="text-slate-200">v2.0.0</span></div>
+              <div class="flex justify-between px-2 py-1.5 rounded bg-[#131a28]"><span class="text-slate-500">App version</span><span class="text-slate-200">v2.0.1</span></div>
               <div class="flex justify-between px-2 py-1.5 rounded bg-[#131a28]"><span class="text-slate-500">Program Engine</span><span class="text-green-400">ONE OUTPUT</span></div>
               <div class="flex justify-between px-2 py-1.5 rounded bg-[#131a28]"><span class="text-slate-500">Media Engine</span><span class="text-amber-400">Local + Bridge</span></div>
               <div class="flex justify-between px-2 py-1.5 rounded bg-[#131a28]"><span class="text-slate-500">Hosting target</span><span class="text-cyan-300">DigitalOcean</span></div>
