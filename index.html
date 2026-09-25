@@ -130,19 +130,28 @@
     .preview-border { border: 2px solid #22c55e; box-shadow: 0 0 14px rgba(34,197,94,0.3); }
     .program-border { border: 2px solid #ef4444; box-shadow: 0 0 14px rgba(239,68,68,0.35); }
     .monitor-stage {
-      position: relative; width: 100%; height: 100%; min-height: 0;
-      display: flex; align-items: center; justify-content: center;
-      background: #05080f; overflow: hidden;
+      position: absolute; inset: 0;
+      width: 100%; height: 100%; min-height: 0;
+      background: #000; overflow: hidden;
     }
     .monitor-frame {
-      position: relative; background: #000; overflow: hidden;
-      flex: 0 0 auto;
-      /* exact 16:9 pixel box from sizeMonitorFrames() */
+      position: absolute; inset: 0;
+      width: 100% !important; height: 100% !important;
+      max-width: none !important; max-height: none !important;
+      background: #000; overflow: hidden;
+    }
+    #preview-monitor, #program-monitor {
+      position: relative;
+      min-height: 0;
     }
     .monitor-frame #preview-content,
     .monitor-frame #program-content {
       position: absolute; inset: 0; width: 100%; height: 100%;
       overflow: hidden;
+    }
+    .monitor-frame .tile,
+    .monitor-frame .layout-grid {
+      width: 100%; height: 100%;
     }
     .monitor-frame .layout-grid {
       display: grid; width: 100%; height: 100%; gap: 1px; background: #0f172a;
@@ -434,7 +443,7 @@
       <div id="sidebar-media" class="px-1.5 py-1.5 rounded bg-amber-950/60 border border-amber-700/60 text-amber-300 text-[9px] font-semibold leading-tight">
         MEDIA ENGINE<br><span id="sidebar-media-sub" class="text-amber-200">LOCAL ONLY</span>
       </div>
-      <div>v2.0.2</div>
+      <div>v2.0.3</div>
       <div class="mt-1 flex flex-wrap gap-2 text-[9px]">
         <a href="landing.html" class="text-slate-500 hover:text-slate-300">Public home</a>
         <a href="terms.html" class="text-slate-500 hover:text-slate-300">Terms</a>
