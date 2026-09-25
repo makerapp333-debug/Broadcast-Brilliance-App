@@ -1,4 +1,4 @@
-// BROADCAST BRILLIANCE v2.0.1 — Sidebar hardened (brand + fallback nav)
+// BROADCAST BRILLIANCE v2.0.2 — Sidebar clicks fixed (delegation + pointer-events)
 // getUserMedia → canvas compositor → MediaRecorder
 // Optional screen share · Encoder / RTMP remain NOT CONNECTED
 
@@ -2540,24 +2540,22 @@ function renderNav() {
   ];
   el.innerHTML = items.map(n => {
     const active = n.id === (state.currentView || 'studio');
-    return '<button type="button" data-nav="' + n.id + '" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] ' +
+    return '<button type="button" data-nav="' + n.id + '" onclick="navigateTo(\'' + n.id + '\')" class="w-full flex items-center gap-2 px-2.5 py-1.5 text-[11px] ' +
       (active ? 'nav-active' : 'text-slate-400 hover:bg-[#131a28] hover:text-slate-200 border-l-2 border-transparent') +
       '"><span class="w-4 text-center shrink-0">' + (n.icon || '•') + '</span><span class="truncate">' + n.label + '</span></button>';
   }).join('');
-  el.querySelectorAll('[data-nav]').forEach(btn => {
-    btn.onclick = function () { navigateTo(btn.getAttribute('data-nav')); };
-  });
-  // Keep sidebar visible
   const side = document.getElementById('app-sidebar') || document.querySelector('.app-sidebar');
   if (side) {
     side.style.display = 'flex';
     side.style.width = '168px';
     side.style.minWidth = '168px';
     side.style.flex = '0 0 168px';
+    side.style.pointerEvents = 'auto';
   }
 }
 
 function navigateTo(id) {
+  if (!id) return;
   const implemented = { studio: true, destinations: true, recordings: true, home: true, users: true, analytics: true, settings: true, guests: true, news: true, sources: true, ads: true, graphics: true, audio: true };
   const studio = document.getElementById('view-studio');
   const dest = document.getElementById('view-destinations');
@@ -2638,6 +2636,7 @@ function navigateTo(id) {
     renderAudioPage();
   }
 }
+window.navigateTo = navigateTo;
 
 function renderAudioPage() {
   if (!state.audio) return;
@@ -4365,6 +4364,22 @@ function tickAudioMeters() {
 
 
 // INIT
+// Capture-phase delegation — always works even if button nodes are replaced
+window.navigateTo = navigateTo;
+if (!window.__bbNavDelegate) {
+  window.__bbNavDelegate = true;
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    if (!t) return;
+    var btn = t.closest ? t.closest('[data-nav]') : null;
+    if (!btn || !btn.closest || !btn.closest('#nav, .app-sidebar')) return;
+    var id = btn.getAttribute('data-nav');
+    if (!id) return;
+    e.preventDefault();
+    e.stopPropagation();
+    navigateTo(id);
+  }, true);
+}
 renderNav(); renderSources(); renderPreview(); renderProgram();
 renderGuests(); renderRundownTable(); renderAds();
 document.querySelectorAll('.ad-filter').forEach(btn => {
