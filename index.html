@@ -132,13 +132,15 @@
     .monitor-stage {
       position: absolute; inset: 0;
       width: 100%; height: 100%; min-height: 0;
-      background: #000; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      background: #05080f; overflow: hidden;
     }
     .monitor-frame {
-      position: absolute; inset: 0;
-      width: 100% !important; height: 100% !important;
-      max-width: none !important; max-height: none !important;
+      position: relative;
+      flex: 0 0 auto;
+      aspect-ratio: 16 / 9;
       background: #000; overflow: hidden;
+      /* exact size set by sizeMonitorFrames() — true 16:9 */
     }
     #preview-monitor, #program-monitor {
       position: relative;
@@ -524,7 +526,7 @@
       <div id="sidebar-media" class="px-1.5 py-1.5 rounded bg-amber-950/60 border border-amber-700/60 text-amber-300 text-[9px] font-semibold leading-tight">
         MEDIA ENGINE<br><span id="sidebar-media-sub" class="text-amber-200">LOCAL ONLY</span>
       </div>
-      <div>v2.0.4</div>
+      <div>v2.0.6</div>
       <div class="mt-1 flex flex-wrap gap-2 text-[9px]">
         <a href="landing.html" class="text-slate-500 hover:text-slate-300">Public home</a>
         <a href="terms.html" class="text-slate-500 hover:text-slate-300">Terms</a>
@@ -1944,7 +1946,47 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 mb-3">
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-3">
+          <div class="bg-[#0f1520] border border-[#1e2a3a] rounded-lg p-3">
+            <div class="text-[12px] font-bold text-white mb-2">Voice-over on Programme</div>
+            <p class="text-[9px] text-slate-500 mb-2">Live mic or uploaded audio mixed onto Program (local). Does not stream until encoder is connected.</p>
+            <div class="flex flex-wrap gap-2 mb-2">
+              <button type="button" id="vo-live-btn" onclick="toggleLiveVoiceOver()" class="px-2.5 py-1 rounded bg-emerald-800 hover:bg-emerald-700 text-white text-[10px] font-semibold">Start live VO</button>
+              <button type="button" onclick="stopVoiceOver()" class="px-2.5 py-1 rounded bg-[#1e2a3a] text-slate-200 text-[10px] font-semibold">Stop VO</button>
+            </div>
+            <div class="mb-2">
+              <label class="text-[10px] text-slate-400">Upload voice-over (mp3/wav/m4a)</label>
+              <input type="file" accept="audio/*" onchange="uploadVoiceOver(this)" class="w-full mt-0.5 text-[11px] text-slate-300" />
+            </div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-[10px] text-slate-400 w-16">VO level</span>
+              <input type="range" min="0" max="100" value="80" id="vo-level" oninput="setVoiceOverLevel(this.value)" class="flex-1 h-1 accent-emerald-500" />
+              <span id="vo-level-val" class="text-[10px] text-slate-300 w-8">80</span>
+            </div>
+            <div id="vo-status" class="text-[10px] text-slate-500">Voice-over: off</div>
+          </div>
+          <div class="bg-[#0f1520] border border-[#1e2a3a] rounded-lg p-3">
+            <div class="text-[12px] font-bold text-white mb-2">Programme video filters</div>
+            <p class="text-[9px] text-slate-500 mb-2">Applied on Program monitor / canvas (local preview of look).</p>
+            <div class="space-y-2">
+              <div class="flex items-center gap-2"><span class="text-[10px] text-slate-400 w-20">Brightness</span>
+                <input type="range" min="50" max="150" value="100" id="vf-brightness" oninput="setVideoFilter('brightness', this.value)" class="flex-1 h-1 accent-blue-500" />
+                <span id="vf-brightness-val" class="text-[10px] text-slate-300 w-10">100%</span></div>
+              <div class="flex items-center gap-2"><span class="text-[10px] text-slate-400 w-20">Contrast</span>
+                <input type="range" min="50" max="150" value="100" id="vf-contrast" oninput="setVideoFilter('contrast', this.value)" class="flex-1 h-1 accent-blue-500" />
+                <span id="vf-contrast-val" class="text-[10px] text-slate-300 w-10">100%</span></div>
+              <div class="flex items-center gap-2"><span class="text-[10px] text-slate-400 w-20">Hue</span>
+                <input type="range" min="0" max="360" value="0" id="vf-hue" oninput="setVideoFilter('hue', this.value)" class="flex-1 h-1 accent-blue-500" />
+                <span id="vf-hue-val" class="text-[10px] text-slate-300 w-10">0°</span></div>
+              <div class="flex items-center gap-2"><span class="text-[10px] text-slate-400 w-20">Smoothen</span>
+                <input type="range" min="0" max="8" value="0" id="vf-smooth" oninput="setVideoFilter('smooth', this.value)" class="flex-1 h-1 accent-blue-500" />
+                <span id="vf-smooth-val" class="text-[10px] text-slate-300 w-10">0</span></div>
+            </div>
+            <button type="button" onclick="resetVideoFilters()" class="mt-2 px-2 py-1 rounded bg-[#1e2a3a] text-slate-300 text-[10px] font-semibold">Reset filters</button>
+          </div>
+        </div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-3 mb-3">
           <div class="bg-[#0f1520] border border-emerald-800/40 rounded-lg p-4 lg:col-span-1">
             <div class="flex items-center justify-between mb-2">
               <span class="text-[13px] font-bold text-emerald-300">MASTER</span>
@@ -2112,6 +2154,9 @@
           </select>
         </div>
         <p class="text-[9px] text-slate-500 leading-relaxed">Paid tier marks the invite for premium access. M-Pesa / IntaSend payment is <span class="text-amber-400">not connected</span> — operator can mark paid manually.</p>
+        <div class="rounded bg-[#0a0e17] border border-[#1e2a3a] px-2 py-1.5 text-[10px] text-slate-300">
+          Guest links request <span class="text-cyan-300 font-semibold">external microphone</span> when available (falls back to default mic).
+        </div>
       </div>
       <div id="invite-result" class="hidden mb-3 p-2 rounded bg-violet-950/50 border border-violet-700/40 text-[10px]">
         <div class="text-violet-300 font-semibold">Token: <span id="invite-token" class="font-mono text-white"></span></div>
@@ -2200,7 +2245,23 @@
           <label class="text-[10px] text-slate-400">Remote name</label>
           <input id="as-remote-name" type="text" placeholder="Field · Nairobi" class="w-full mt-0.5 px-2 py-1.5 text-[12px] bg-[#0a0e17] border border-[#2a3a4f] rounded text-white" />
         </div>
-        <p class="text-[9px] text-slate-500 leading-relaxed">Creates a <b>source slot</b> and share token. Two separate things: (1) shareable link needs HTTP/HTTPS or Settings → Public site URL — not file://. (2) Live remote video into Program needs WebRTC Media Engine (not connected yet).</p>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-[10px] text-slate-400">Camera for link</label>
+            <select id="as-remote-cam" class="w-full mt-0.5 px-2 py-1.5 text-[12px] bg-[#0a0e17] border border-[#2a3a4f] rounded text-white">
+              <option value="user">Front camera</option>
+              <option value="environment">Back camera</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-[10px] text-slate-400">Microphone</label>
+            <select id="as-remote-mic" class="w-full mt-0.5 px-2 py-1.5 text-[12px] bg-[#0a0e17] border border-[#2a3a4f] rounded text-white">
+              <option value="default">Default mic</option>
+              <option value="external" selected>External mic preferred</option>
+            </select>
+          </div>
+        </div>
+        <p class="text-[9px] text-slate-500 leading-relaxed">Camera / mic choices are written into the share link. Field device opens with those prefs. Live WebRTC into Program is not connected yet — this prepares devices + token.</p>
         <div id="as-remote-link" class="hidden text-[10px] font-mono text-cyan-300 break-all p-2 rounded bg-[#0a0e17] border border-[#1e2a3a]"></div>
       </div>
       <div id="add-src-panel-guest" class="space-y-2 hidden">
