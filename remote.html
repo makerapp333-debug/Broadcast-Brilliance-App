@@ -6,97 +6,121 @@
   <title>Remote Camera — Broadcast Brilliance</title>
   <style>
     * { box-sizing: border-box; }
-    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background: #070b12; color: #e2e8f0; min-height: 100vh; display: flex; flex-direction: column; }
-    a { color: #38bdf8; text-decoration: none; }
-    header { padding: 1rem 1.25rem; border-bottom: 1px solid #1e2a3a; background: #0c1220; display: flex; align-items: center; justify-content: space-between; }
-    .logo { width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, #0d9488, #22d3ee); display: flex; align-items: center; justify-content: center; font-weight: 800; color: #fff; font-size: 11px; }
-    .brand { display: flex; align-items: center; gap: 0.65rem; }
-    main { flex: 1; max-width: 480px; width: 100%; margin: 0 auto; padding: 1.5rem 1.25rem 3rem; }
-    h1 { font-size: 1.35rem; margin: 0 0 0.35rem; color: #fff; }
-    .sub { color: #64748b; font-size: 13px; margin-bottom: 1.25rem; }
-    .card { background: #0f1520; border: 1px solid #1e2a3a; border-radius: 12px; padding: 1rem 1.15rem; margin-bottom: 0.85rem; }
-    label { display: block; font-size: 11px; color: #94a3b8; margin-bottom: 0.25rem; }
-    input { width: 100%; padding: 0.55rem 0.65rem; border-radius: 8px; border: 1px solid #2a3a4f; background: #0a0e17; color: #fff; font-size: 14px; }
-    .btn { display: inline-block; width: 100%; padding: 0.7rem 1rem; border-radius: 8px; font-weight: 600; font-size: 14px; border: none; cursor: pointer; margin-top: 0.5rem; }
-    .btn-primary { background: #0f766e; color: #fff; }
-    .btn-secondary { background: #131a28; color: #e2e8f0; border: 1px solid #2a3a4f; }
-    .preview { aspect-ratio: 16/9; background: #000; border-radius: 10px; overflow: hidden; border: 1px solid #1e2a3a; }
-    .preview video { width: 100%; height: 100%; object-fit: cover; }
-    .status { font-size: 13px; padding: 0.5rem 0.75rem; border-radius: 8px; margin-top: 0.75rem; background: #1c1917; border: 1px solid #a16207; color: #fcd34d; display: none; }
-    .muted { font-size: 12px; color: #64748b; line-height: 1.5; }
-    footer { text-align: center; padding: 1rem; font-size: 12px; color: #475569; }
-    footer a { color: #64748b; margin: 0 0.5rem; }
+    body { margin: 0; font-family: system-ui, sans-serif; background: #070b12; color: #e2e8f0; min-height: 100vh; display: flex; flex-direction: column; }
+    a { color: #38bdf8; }
+    header { padding: 1rem 1.25rem; border-bottom: 1px solid #1e2a3a; background: #0c1220; }
+    main { flex: 1; max-width: 480px; margin: 0 auto; padding: 1.25rem; width: 100%; }
+    label { display: block; font-size: 11px; color: #94a3b8; margin-bottom: 4px; }
+    input, select { width: 100%; padding: 0.55rem 0.65rem; border-radius: 8px; border: 1px solid #2a3a4f; background: #0a0e17; color: #fff; margin-bottom: 0.75rem; }
+    .btn { display: inline-block; width: 100%; padding: 0.65rem; border: 0; border-radius: 8px; font-weight: 700; cursor: pointer; margin-bottom: 0.5rem; }
+    .btn-primary { background: #0d9488; color: #fff; }
+    .btn-secondary { background: #1e2a3a; color: #e2e8f0; }
+    video { width: 100%; border-radius: 10px; background: #000; aspect-ratio: 16/9; margin: 0.75rem 0; }
+    .prefs { font-size: 12px; color: #94a3b8; background: #0f1520; border: 1px solid #1e2a3a; border-radius: 8px; padding: 0.65rem 0.75rem; margin-bottom: 0.75rem; }
+    .prefs b { color: #5eead4; }
+    #status { font-size: 12px; min-height: 1.2em; }
   </style>
 </head>
 <body>
-  <header>
-    <div class="brand">
-      <div class="logo">BB</div>
-      <div>
-        <div style="font-weight:700;font-size:13px;color:#fff;">Remote Camera</div>
-        <div style="font-size:11px;color:#64748b;">Broadcast Brilliance</div>
-      </div>
-    </div>
-    <a href="landing.html" style="font-size:12px;color:#94a3b8;">Public home</a>
-  </header>
+  <header><strong>Remote Camera</strong> · Broadcast Brilliance</header>
   <main>
-    <h1>Field / remote connect</h1>
-    <p class="sub">Use the token from the director. Check your camera, then stand by for the Source Engine.</p>
-    <div class="card">
-      <label for="token">Remote token</label>
-      <input id="token" type="text" placeholder="tok_rm_xxxxxxxx" />
-      <label for="label" style="margin-top:0.75rem;">Location / label</label>
-      <input id="label" type="text" placeholder="e.g. Nairobi field" />
-      <button type="button" class="btn btn-primary" onclick="connectRemote()">Register remote</button>
-      <div id="msg" class="muted" style="margin-top:0.5rem;"></div>
-    </div>
-    <div class="card">
-      <div style="font-weight:600;font-size:13px;margin-bottom:0.5rem;color:#fff;">Camera check</div>
-      <div class="preview"><video id="preview" autoplay muted playsinline></video></div>
-      <button type="button" class="btn btn-secondary" onclick="startCam()">Allow camera</button>
-    </div>
-    <div id="status" class="status">Registered — WebRTC ingest not connected; director sees a standby remote source when created from Studio.</div>
-    <p class="muted">Full remote WebRTC to Program requires the Media Engine / SFU path. This page is device prep + token registration on this device.</p>
+    <p style="font-size:13px;color:#94a3b8">Field camera join. Device preferences come from the director’s share link.</p>
+    <div class="prefs" id="prefs">Loading preferences…</div>
+    <label>Token</label>
+    <input id="token" type="text" placeholder="tok_…" />
+    <label>Label (location / camera)</label>
+    <input id="label" type="text" placeholder="Nairobi field" />
+    <label>Camera override (optional)</label>
+    <select id="cam-override">
+      <option value="">Use link preference</option>
+      <option value="user">Front</option>
+      <option value="environment">Back</option>
+    </select>
+    <label>Mic override (optional)</label>
+    <select id="mic-override">
+      <option value="">Use link preference</option>
+      <option value="default">Default mic</option>
+      <option value="external">External mic preferred</option>
+    </select>
+    <video id="preview" autoplay playsinline muted></video>
+    <button class="btn btn-secondary" type="button" onclick="startDevices()">Start camera &amp; mic</button>
+    <button class="btn btn-primary" type="button" onclick="registerRemote()">Register with studio</button>
+    <div id="status"></div>
   </main>
-  <footer>
-    <a href="landing.html">Home</a>
-    <a href="guest.html">Guest join</a>
-    <a href="terms.html">Terms</a>
-    <a href="privacy.html">Privacy</a>
-  </footer>
   <script>
     const params = new URLSearchParams(location.search);
-    const t = params.get('token') || params.get('remote') || '';
-    if (t) document.getElementById('token').value = t;
-    if (location.hash.startsWith('#remote=')) {
-      document.getElementById('token').value = location.hash.slice(8);
-    }
-    let stream = null;
-    async function startCam() {
+    const tokenFromUrl = params.get('token') || '';
+    const camPref = params.get('cam') || 'user';
+    const micPref = params.get('mic') || 'external';
+    if (tokenFromUrl) document.getElementById('token').value = tokenFromUrl;
+    document.getElementById('prefs').innerHTML =
+      'Link prefs: camera <b>' + (camPref === 'environment' ? 'Back' : 'Front') + '</b> · mic <b>' +
+      (micPref === 'external' ? 'External preferred' : 'Default') + '</b>';
+
+    let localStream = null;
+
+    async function pickAudioConstraints(preferExternal) {
+      const base = { echoCancellation: true, noiseSuppression: true };
+      if (!preferExternal) return base;
       try {
-        if (stream) stream.getTracks().forEach(x => x.stop());
-        stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-        document.getElementById('preview').srcObject = stream;
-      } catch (e) {
-        document.getElementById('msg').textContent = 'Camera error: ' + (e.message || e);
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const inputs = devices.filter(d => d.kind === 'audioinput');
+        const ext = inputs.find(d => /usb|external|headset|wireless|boom|rode|blue|yeti/i.test(d.label || ''));
+        if (ext && ext.deviceId) return { ...base, deviceId: { ideal: ext.deviceId } };
+      } catch (e) {}
+      return base;
+    }
+
+    async function startDevices() {
+      const st = document.getElementById('status');
+      const camO = document.getElementById('cam-override').value;
+      const micO = document.getElementById('mic-override').value;
+      const facing = camO || camPref || 'user';
+      const micMode = micO || micPref || 'external';
+      try {
+        if (localStream) localStream.getTracks().forEach(t => t.stop());
+        const audio = await pickAudioConstraints(micMode === 'external');
+        localStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: facing }, width: { ideal: 1280 }, height: { ideal: 720 } },
+          audio: audio
+        });
+        const v = document.getElementById('preview');
+        v.srcObject = localStream;
+        await v.play().catch(() => {});
+        st.style.color = '#86efac';
+        st.textContent = 'Devices active · cam=' + facing + ' · mic=' + micMode + ' (local only until WebRTC connected)';
+      } catch (err) {
+        st.style.color = '#fca5a5';
+        st.textContent = 'Device error: ' + (err.message || err);
       }
     }
-    function connectRemote() {
-      const token = document.getElementById('token').value.trim();
-      const label = document.getElementById('label').value.trim() || 'Remote';
-      const msg = document.getElementById('msg');
-      if (!token) { msg.textContent = 'Token required.'; return; }
+
+    function registerRemote() {
+      const token = (document.getElementById('token').value || '').trim();
+      const label = (document.getElementById('label').value || '').trim() || 'Remote';
+      const st = document.getElementById('status');
+      if (!token) { st.style.color = '#fca5a5'; st.textContent = 'Token required'; return; }
+      const camO = document.getElementById('cam-override').value;
+      const micO = document.getElementById('mic-override').value;
+      const payload = {
+        token, label, name: label, joinedAt: Date.now(), status: 'ready',
+        cam: camO || camPref, mic: micO || micPref
+      };
       try {
-        const payload = { token, label, type: 'remote', at: Date.now() };
         localStorage.setItem('bb_remote_join', JSON.stringify(payload));
         const log = JSON.parse(localStorage.getItem('bb_remote_join_log') || '[]');
         log.unshift(payload);
         localStorage.setItem('bb_remote_join_log', JSON.stringify(log.slice(0, 20)));
-      } catch (e) {}
-      msg.textContent = 'Registered “' + label + '” with token ' + token;
-      msg.style.color = '#86efac';
-      document.getElementById('status').style.display = 'block';
+        st.style.color = '#86efac';
+        st.textContent = 'Registered “' + label + '” · token ' + token;
+      } catch (e) {
+        st.style.color = '#fca5a5';
+        st.textContent = 'Could not register locally';
+      }
     }
+
+    // Auto-start if token present
+    if (tokenFromUrl) setTimeout(() => { startDevices().catch(() => {}); }, 400);
   </script>
 </body>
 </html>
