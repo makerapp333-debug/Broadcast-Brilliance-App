@@ -1,4 +1,4 @@
-// BROADCAST BRILLIANCE v2.0.4 — Program on-air overlays match Preview reference
+// BROADCAST BRILLIANCE v2.0.6 — Remote cam/mic prefs, VO, video filters
 // getUserMedia → canvas compositor → MediaRecorder
 // Optional screen share · Encoder / RTMP remain NOT CONNECTED
 
@@ -145,6 +145,10 @@ const state = {
     localStream: null,
     screenStream: null,
     compositorActive: false,
+    voiceOver: { live: false, stream: null, audioEl: null, level: 80, source: null },
+    videoFilters: { brightness: 100, contrast: 100, hue: 0, smooth: 0 },
+    voiceOver: { live: false, stream: null, audioEl: null, level: 80, source: null },
+    videoFilters: { brightness: 100, contrast: 100, hue: 0, smooth: 0 },
     recording: false,
     mediaRecorder: null,
     recordedChunks: [],
@@ -550,7 +554,7 @@ function stopScreenShare() {
 
 
 function sizeMonitorFrames() {
-  // Fill the entire Preview/Program monitors — no letterbox bars
+  // Largest true 16:9 frame centered in each monitor (broadcast standard)
   ['preview-monitor', 'program-monitor'].forEach(mid => {
     const mon = document.getElementById(mid);
     const stage = document.querySelector('#' + mid + ' .monitor-stage');
@@ -561,17 +565,27 @@ function sizeMonitorFrames() {
     if (rw < 32 || rh < 32) return;
     stage.style.width = '100%';
     stage.style.height = '100%';
-    frame.style.width = '100%';
-    frame.style.height = '100%';
+    // Fit 16:9 inside the monitor box
+    let w = rw;
+    let h = w * 9 / 16;
+    if (h > rh) {
+      h = rh;
+      w = h * 16 / 9;
+    }
+    w = Math.floor(w);
+    h = Math.floor(h);
+    frame.style.width = w + 'px';
+    frame.style.height = h + 'px';
     frame.style.maxWidth = 'none';
     frame.style.maxHeight = 'none';
+    frame.style.aspectRatio = '16 / 9';
   });
-  // Canvas resolution matches the filled program frame
+  // Canvas internal resolution matches the 16:9 program frame
   const frame = document.getElementById('program-frame');
   const canvas = document.getElementById('program-canvas');
   if (frame && canvas) {
     const w = Math.max(320, frame.clientWidth || 640);
-    const h = Math.max(180, frame.clientHeight || 360);
+    const h = Math.max(180, Math.round(w * 9 / 16));
     if (canvas.width !== w || canvas.height !== h) {
       canvas.width = w;
       canvas.height = h;
@@ -585,8 +599,17 @@ function resizeProgramCanvas() {
   if (!canvas || !frame) return;
   if (typeof sizeMonitorFrames === 'function') sizeMonitorFrames();
   const rect = frame.getBoundingClientRect();
-  const w = Math.max(320, Math.floor(rect.width) || 640);
-  const h = Math.max(180, Math.floor(rect.height) || 360);
+  let w = Math.max(320, Math.floor(rect.width) || 640);
+  let h = Math.max(180, Math.round(w * 9 / 16));
+  // Prefer frame height if already 16:9
+  if (rect.height > 0) {
+    const fromH = Math.floor(rect.height);
+    const fromW = Math.round(fromH * 16 / 9);
+    if (Math.abs(fromW - w) < 4) {
+      w = fromW;
+      h = fromH;
+    }
+  }
   if (canvas.width !== w || canvas.height !== h) {
     canvas.width = w;
     canvas.height = h;
@@ -2339,7 +2362,7 @@ function sendInvite() {
   slot.token = 'tok_' + Math.random().toString(36).slice(2, 8);
   const res = document.getElementById('invite-result');
   if (res) {
-    const joinUrl = appPageUrl('guest.html', 'token=' + encodeURIComponent(slot.token));
+    const joinUrl = appPageUrl('guest.html', 'token=' + encodeURIComponent(slot.token) + '&mic=external');
     res.classList.remove('hidden');
     res.innerHTML = '<div class="text-green-400 text-[11px] font-semibold mb-1">Invite created</div>' +
       '<div class="text-[10px] text-slate-400">Token: <span class="font-mono text-slate-200">' + slot.token + '</span></div>' +
@@ -3139,7 +3162,11 @@ function submitAddSource() {
     const name = (document.getElementById('as-remote-name').value || '').trim() || 'Remote camera';
     const token = 'tok_rm_' + Math.random().toString(36).slice(2, 10);
     const id = 'remote_' + Math.random().toString(36).slice(2, 7);
-    const shareUrl = appPageUrl('remote.html', 'token=' + encodeURIComponent(token));
+    const camEl = document.getElementById('as-remote-cam');
+    const micEl = document.getElementById('as-remote-mic');
+    const facing = (camEl && camEl.value) || 'user';
+    const micPref = (micEl && micEl.value) || 'external';
+    const shareUrl = appPageUrl('remote.html', 'token=' + encodeURIComponent(token) + '&cam=' + encodeURIComponent(facing) + '&mic=' + encodeURIComponent(micPref));
     state.sources.push({
       id, name, type: 'remote', status: 'standby', res: '—', role: 'Field',
       color: '#0f766e', icon: '📡', hasStream: false, shareToken: token, shareUrl: shareUrl
@@ -4389,6 +4416,127 @@ function tickAudioMeters() {
       masterEl.style.width = Math.round(avg * (m.level / 100)) + '%';
     }
   }
+}
+
+
+
+// ========== VOICE-OVER + PROGRAMME VIDEO FILTERS ==========
+function applyProgramVideoFilters() {
+  const f = (state.media && state.media.videoFilters) || { brightness: 100, contrast: 100, hue: 0, smooth: 0 };
+  const filter = 'brightness(' + (f.brightness / 100) + ') contrast(' + (f.contrast / 100) + ') hue-rotate(' + f.hue + 'deg) blur(' + (Number(f.smooth) * 0.4) + 'px)';
+  const canvas = document.getElementById('program-canvas');
+  const content = document.getElementById('program-content');
+  if (canvas) canvas.style.filter = filter;
+  if (content) content.style.filter = filter;
+}
+
+function setVideoFilter(key, value) {
+  if (!state.media.videoFilters) state.media.videoFilters = { brightness: 100, contrast: 100, hue: 0, smooth: 0 };
+  const v = Number(value);
+  state.media.videoFilters[key] = v;
+  const map = { brightness: 'vf-brightness-val', contrast: 'vf-contrast-val', hue: 'vf-hue-val', smooth: 'vf-smooth-val' };
+  const el = document.getElementById(map[key]);
+  if (el) {
+    if (key === 'hue') el.textContent = v + '°';
+    else if (key === 'smooth') el.textContent = String(v);
+    else el.textContent = v + '%';
+  }
+  applyProgramVideoFilters();
+}
+
+function resetVideoFilters() {
+  state.media.videoFilters = { brightness: 100, contrast: 100, hue: 0, smooth: 0 };
+  const defaults = { brightness: 100, contrast: 100, hue: 0, smooth: 0 };
+  Object.keys(defaults).forEach(k => {
+    const id = k === 'smooth' ? 'vf-smooth' : ('vf-' + k);
+    const input = document.getElementById(id);
+    if (input) input.value = defaults[k];
+    setVideoFilter(k, defaults[k]);
+  });
+  audit('VIDEO_FILTER', 'reset');
+}
+
+async function toggleLiveVoiceOver() {
+  const vo = state.media.voiceOver || (state.media.voiceOver = { live: false, stream: null, audioEl: null, level: 80, source: null });
+  if (vo.live && vo.source === 'live') { stopVoiceOver(); return; }
+  if (vo.live && vo.source === 'file') stopVoiceOver();
+  try {
+    let audioConstraints = { echoCancellation: true, noiseSuppression: true };
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const inputs = devices.filter(d => d.kind === 'audioinput');
+      const ext = inputs.find(d => /usb|external|headset|wireless|boom|rode|blue|yeti/i.test(d.label || ''));
+      if (ext && ext.deviceId) audioConstraints.deviceId = { ideal: ext.deviceId };
+    } catch (e) {}
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: audioConstraints, video: false });
+    vo.stream = stream;
+    vo.live = true;
+    vo.source = 'live';
+    try {
+      if (!state.media._audioCtx) state.media._audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const ctx = state.media._audioCtx;
+      if (ctx.state === 'suspended') await ctx.resume();
+      const src = ctx.createMediaStreamSource(stream);
+      const gain = ctx.createGain();
+      gain.gain.value = (vo.level || 80) / 100;
+      src.connect(gain);
+      gain.connect(ctx.destination);
+      vo._gain = gain;
+      vo._sourceNode = src;
+    } catch (e) { console.warn(e); }
+    const btn = document.getElementById('vo-live-btn');
+    if (btn) btn.textContent = 'Stop live VO';
+    const st = document.getElementById('vo-status');
+    if (st) st.textContent = 'Voice-over: LIVE mic on Programme';
+    audit('VO_LIVE', 'start');
+    if (typeof pushNotification === 'function') pushNotification('AUDIO', 'Live voice-over on', 'ok');
+  } catch (err) {
+    if (typeof pushNotification === 'function') pushNotification('AUDIO', 'VO mic failed: ' + (err.message || err), 'error');
+  }
+}
+
+function stopVoiceOver() {
+  const vo = state.media.voiceOver || {};
+  if (vo.stream) { vo.stream.getTracks().forEach(t => t.stop()); vo.stream = null; }
+  if (vo.audioEl) { try { vo.audioEl.pause(); vo.audioEl.src = ''; } catch (e) {} vo.audioEl = null; }
+  try { if (vo._sourceNode) vo._sourceNode.disconnect(); if (vo._gain) vo._gain.disconnect(); } catch (e) {}
+  vo._sourceNode = null; vo._gain = null; vo.live = false; vo.source = null;
+  state.media.voiceOver = vo;
+  const btn = document.getElementById('vo-live-btn');
+  if (btn) btn.textContent = 'Start live VO';
+  const st = document.getElementById('vo-status');
+  if (st) st.textContent = 'Voice-over: off';
+  audit('VO_STOP', 'stopped');
+}
+
+function setVoiceOverLevel(v) {
+  if (!state.media.voiceOver) state.media.voiceOver = { live: false, level: 80 };
+  const vo = state.media.voiceOver;
+  vo.level = Math.max(0, Math.min(100, Number(v)));
+  const label = document.getElementById('vo-level-val');
+  if (label) label.textContent = String(vo.level);
+  if (vo._gain) vo._gain.gain.value = vo.level / 100;
+  if (vo.audioEl) vo.audioEl.volume = vo.level / 100;
+}
+
+function uploadVoiceOver(input) {
+  const file = input && input.files && input.files[0];
+  if (!file) return;
+  stopVoiceOver();
+  if (!state.media.voiceOver) state.media.voiceOver = { live: false, level: 80 };
+  const vo = state.media.voiceOver;
+  const url = URL.createObjectURL(file);
+  const audio = new Audio(url);
+  audio.loop = true;
+  audio.volume = (vo.level || 80) / 100;
+  audio.play().catch(() => {});
+  vo.audioEl = audio;
+  vo.live = true;
+  vo.source = 'file';
+  const st = document.getElementById('vo-status');
+  if (st) st.textContent = 'Voice-over: playing “' + file.name + '”';
+  audit('VO_UPLOAD', file.name);
+  if (typeof pushNotification === 'function') pushNotification('AUDIO', 'Uploaded VO playing', 'ok');
 }
 
 
