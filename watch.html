@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <link rel="manifest" href="site.webmanifest" />
+  <title>Watch · On Air — Broadcast Brilliance</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%; width: 100%; background: #000; color: #e2e8f0;
+      font-family: system-ui, sans-serif; overflow: hidden; touch-action: manipulation;
+    }
+    .wrap {
+      height: 100%; width: 100%;
+      display: flex; align-items: center; justify-content: center;
+      background: #000;
+    }
+    .stage {
+      position: relative;
+      width: min(100vw, calc(100vh * 16 / 9));
+      height: min(100vh, calc(100vw * 9 / 16));
+      aspect-ratio: 16 / 9;
+      background: #000;
+      overflow: hidden;
+    }
+    .stage img, .stage iframe, .stage video {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      border: 0; background: #000;
+    }
+    .stage img, .stage video { object-fit: contain; }
+    .waiting {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 10px; color: #64748b; font-size: 14px;
+      text-align: center; padding: 24px; z-index: 2;
+    }
+    .waiting .icon { font-size: 36px; opacity: 0.35; }
+    .waiting .sub { font-size: 12px; max-width: 320px; line-height: 1.45; color: #475569; }
+    .chrome {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 14px;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.75), transparent);
+      transition: opacity 0.5s ease;
+    }
+    .chrome.hidden-chrome { opacity: 0; pointer-events: none; }
+    .chrome .title { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: #cbd5e1; }
+    .chrome .actions { display: flex; align-items: center; gap: 8px; }
+    .live {
+      display: none; align-items: center; gap: 6px;
+      background: #dc2626; color: #fff;
+      font-size: 11px; font-weight: 800;
+      padding: 4px 10px; border-radius: 3px;
+    }
+    .live.show { display: inline-flex; }
+    .live i {
+      width: 7px; height: 7px; border-radius: 50%; background: #fff;
+      animation: pulse 1s infinite;
+    }
+    @keyframes pulse { 50% { opacity: 0.35; } }
+    .btn-pip {
+      pointer-events: auto;
+      border: 0; border-radius: 6px;
+      background: rgba(30,41,59,0.9); color: #e2e8f0;
+      font-size: 11px; font-weight: 700;
+      padding: 6px 10px; cursor: pointer;
+    }
+    .btn-pip:active { background: #334155; }
+  </style>
+</head>
+<body>
+  <div class="chrome" id="chrome">
+    <span class="title">BROADCAST BRILLIANCE · WATCH</span>
+    <div class="actions">
+      <button type="button" class="btn-pip" id="btn-pip" title="Float over other apps">PiP</button>
+      <span class="live" id="live-badge"><i></i> ON AIR</span>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="stage" id="stage">
+      <div class="waiting" id="waiting">
+        <div class="icon">▶</div>
+        <div>Waiting for Programme…</div>
+        <div class="sub">Keep Studio open on this same site. Use <b>PiP</b> to float video over other apps.</div>
+      </div>
+      <img id="frame" alt="" style="display:none" />
+      <video id="pip-src" playsinline autoplay muted style="display:none"></video>
+      <iframe id="yt" title="Program" style="display:none" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+    </div>
+  </div>
+  <script>
+    const frame = document.getElementById('frame');
+    const yt = document.getElementById('yt');
+    const pipSrc = document.getElementById('pip-src');
+    const waiting = document.getElementById('waiting');
+    const liveBadge = document.getElementById('live-badge');
+    const chrome = document.getElementById('chrome');
+    let lastAt = 0;
+    let hideTimer = null;
+    let currentYt = null;
+    let lastDataUrl = null;
+    let wakeLock = null;
+
+    function showChromeBriefly() {
+      chrome.classList.remove('hidden-chrome');
+      clearTimeout(hideTimer);
+      hideTimer = setTimeout(function () {
+        if (lastAt && Date.now() - lastAt < 5000) chrome.classList.add('hidden-chrome');
+      }, 2800);
+    }
+
+    async function requestWake() {
+      try {
+        if (!('wakeLock' in navigator)) return;
+        if (wakeLock) return;
+        wakeLock = await navigator.wakeLock.request('screen');
+        wakeLock.addEventListener('release', function () { wakeLock = null; });
+      } catch (e) { wakeLock = null; }
+    }
+
+    function updateMediaSession(live, name) {
+      try {
+        if (!navigator.mediaSession) return;
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: live ? 'ON AIR · Watch' : 'Programme · Watch',
+          artist: name || 'Broadcast Brilliance',
+          album: 'Watch'
+        });
+        navigator.mediaSession.playbackState = 'playing';
+      } catch (e) {}
+    }
+
+    function showYt(id) {
+      if (!id) return;
+      waiting.style.display = 'none';
+      frame.style.display = 'none';
+      pipSrc.style.display = 'none';
+      if (currentYt !== id) {
+        currentYt = id;
+        yt.src = 'https://www.youtube.com/embed/' + id + '?autoplay=1&mute=1&controls=0&rel=0&modestbranding=1&playsinline=1';
+      }
+      yt.style.display = 'block';
+      lastAt = Date.now();
+      showChromeBriefly();
+      requestWake();
+      updateMediaSession(true, 'YouTube');
+    }
+
+    function showFrame(dataUrl) {
+      currentYt = null;
+      yt.style.display = 'none';
+      try { yt.removeAttribute('src'); } catch (e) {}
+      if (dataUrl) {
+        lastDataUrl = dataUrl;
+        frame.src = dataUrl;
+        frame.style.display = 'block';
+        waiting.style.display = 'none';
+      }
+      lastAt = Date.now();
+      showChromeBriefly();
+      requestWake();
+      updateMediaSession(true, 'Programme');
+    }
+
+    function onFrame(m) {
+      if (!m) return;
+      if (m.live) liveBadge.classList.add('show');
+      else liveBadge.classList.remove('show');
+      if (m.youtubeId) { showYt(m.youtubeId); return; }
+      if (m.dataUrl) showFrame(m.dataUrl);
+    }
+
+    async function togglePiP() {
+      try {
+        if (!document.pictureInPictureEnabled) {
+          alert('Picture-in-Picture is not supported in this browser.');
+          return;
+        }
+        // Prefer video element: feed from last canvas frame via capture is studio-side;
+        // On Watch we PiP the hidden video if we can draw frames, else try iframe (limited).
+        if (document.pictureInPictureElement) {
+          await document.exitPictureInPicture();
+          return;
+        }
+        // Build a short looping display from last JPEG if needed is heavy — use pipSrc with ImageBitmap stream when possible
+        if (lastDataUrl) {
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          await new Promise(function (res, rej) { img.onload = res; img.onerror = rej; img.src = lastDataUrl; });
+          const c = document.createElement('canvas');
+          c.width = img.naturalWidth || 640;
+          c.height = img.naturalHeight || 360;
+          const ctx = c.getContext('2d');
+          function paint() {
+            try { ctx.drawImage(img, 0, 0, c.width, c.height); } catch (e) {}
+            if (lastDataUrl) {
+              const n = new Image();
+              n.onload = function () {
+                try { ctx.drawImage(n, 0, 0, c.width, c.height); } catch (e) {}
+              };
+              n.src = lastDataUrl;
+            }
+          }
+          paint();
+          const stream = c.captureStream(15);
+          pipSrc.srcObject = stream;
+          pipSrc.style.display = 'block';
+          frame.style.display = 'none';
+          await pipSrc.play();
+          await pipSrc.requestPictureInPicture();
+          return;
+        }
+        if (currentYt && yt.requestPictureInPicture) {
+          // Most browsers block PiP on cross-origin iframes
+          alert('YouTube PiP may be blocked by the browser. Use Studio PiP for camera/media sources.');
+          return;
+        }
+        alert('Wait for Programme frames, then try PiP again.');
+      } catch (err) {
+        alert('PiP failed: ' + (err.message || err));
+      }
+    }
+
+    document.getElementById('btn-pip').addEventListener('click', function (e) {
+      e.stopPropagation();
+      togglePiP();
+    });
+
+    // Do not pause when tab is hidden
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'visible') {
+        requestWake();
+        if (pipSrc && pipSrc.paused) pipSrc.play().catch(function () {});
+      }
+    });
+
+    try {
+      localStorage.setItem('bb_watch_viewer', JSON.stringify({ at: Date.now() }));
+      const bc = new BroadcastChannel('bb-watch');
+      bc.postMessage({ type: 'viewer-hello', at: Date.now() });
+      bc.onmessage = function (ev) {
+        const m = ev.data || {};
+        if (m.type === 'program-frame') onFrame(m);
+      };
+      window.addEventListener('storage', function (e) {
+        if (e.key === 'bb_watch_frame' && e.newValue) {
+          try { onFrame(JSON.parse(e.newValue)); } catch (err) {}
+        }
+      });
+      setInterval(function () {
+        try { localStorage.setItem('bb_watch_viewer', JSON.stringify({ at: Date.now() })); } catch (e) {}
+        bc.postMessage({ type: 'viewer-hello', at: Date.now() });
+        if (lastAt && Date.now() - lastAt > 12000) {
+          waiting.style.display = 'flex';
+          frame.style.display = 'none';
+          yt.style.display = 'none';
+          liveBadge.classList.remove('show');
+          chrome.classList.remove('hidden-chrome');
+        }
+      }, 2000);
+      var pipBtn = document.getElementById('btn-watch-pip');
+      if (pipBtn) pipBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        try { window.open(location.href, 'bb_watch_pip', 'width=480,height=270,menubar=no,toolbar=no'); } catch (err) {}
+      });
+      document.addEventListener('click', showChromeBriefly);
+      document.addEventListener('touchstart', showChromeBriefly, { passive: true });
+    } catch (e) {
+      waiting.innerHTML = '<div class="icon">▶</div><div>Watch needs a modern browser (BroadcastChannel).</div>';
+    }
+  </script>
+</body>
+</html>
