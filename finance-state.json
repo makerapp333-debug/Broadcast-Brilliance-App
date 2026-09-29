@@ -1,0 +1,315 @@
+{
+  "version": 1,
+  "mode": "TEST",
+  "users": {
+    "u1": {
+      "id": "u1",
+      "name": "Director Maina",
+      "role": "owner",
+      "phone": "+254700000001",
+      "country": "KE",
+      "email": "director@newsroom.local",
+      "pinHash": "f1ce1442bd63530216de445141222e96f68141b25c389e78c001745b6b64e930",
+      "pinAttempts": 0,
+      "pinLockedUntil": 0,
+      "pinSalt": "25f8cc6bc4b0b7c69fb14309263a36d5"
+    },
+    "u2": {
+      "id": "u2",
+      "name": "Producer Wanjiku",
+      "role": "producer",
+      "phone": "+254700000002",
+      "country": "KE",
+      "email": "producer@newsroom.local",
+      "pinHash": null,
+      "pinAttempts": 0,
+      "pinLockedUntil": 0
+    },
+    "admin": {
+      "id": "admin",
+      "name": "Platform Admin",
+      "role": "admin",
+      "phone": "+254700000000",
+      "country": "KE",
+      "email": "admin@newsroom.local",
+      "pinHash": null,
+      "pinAttempts": 0,
+      "pinLockedUntil": 0
+    },
+    "guest_buyer": {
+      "id": "guest_buyer",
+      "name": "Guest buyer",
+      "role": "viewer",
+      "phone": "",
+      "country": "KE",
+      "email": "",
+      "pinHash": null
+    }
+  },
+  "wallets": {
+    "u1": {
+      "userId": "u1",
+      "availableMinor": 14200,
+      "pendingMinor": 0,
+      "totalEarningsMinor": 4200,
+      "totalWithdrawnMinor": 0,
+      "totalDepositsMinor": 10000,
+      "totalGuestTokenRevenueMinor": 3600,
+      "totalAdRevenueMinor": 600,
+      "status": "active",
+      "withdrawalStatus": "ok",
+      "currency": "KES",
+      "updatedAt": 1790621766778
+    },
+    "u2": {
+      "userId": "u2",
+      "availableMinor": 0,
+      "pendingMinor": 0,
+      "totalEarningsMinor": 0,
+      "totalWithdrawnMinor": 0,
+      "totalDepositsMinor": 0,
+      "totalGuestTokenRevenueMinor": 0,
+      "totalAdRevenueMinor": 0,
+      "status": "active",
+      "withdrawalStatus": "ok",
+      "currency": "KES",
+      "updatedAt": 1790616066661
+    },
+    "admin": {
+      "userId": "admin",
+      "availableMinor": 0,
+      "pendingMinor": 0,
+      "totalEarningsMinor": 0,
+      "totalWithdrawnMinor": 0,
+      "totalDepositsMinor": 0,
+      "totalGuestTokenRevenueMinor": 0,
+      "totalAdRevenueMinor": 0,
+      "status": "active",
+      "withdrawalStatus": "ok",
+      "currency": "KES",
+      "updatedAt": 1790621764227
+    }
+  },
+  "plans": {
+    "free": {
+      "id": "free",
+      "name": "Free",
+      "description": "Basic studio",
+      "priceMinor": 0,
+      "currency": "KES",
+      "billingPeriod": "monthly",
+      "status": "active",
+      "features": {
+        "guest_invites": true,
+        "paid_guest_tokens": false,
+        "advertising": false,
+        "virtual_studio": true,
+        "recording": true,
+        "analytics": false,
+        "multi_operator": false,
+        "HD_streaming": false
+      }
+    },
+    "pro": {
+      "id": "pro",
+      "name": "Professional",
+      "description": "Paid guests, ads, HD",
+      "priceMinor": 250000,
+      "currency": "KES",
+      "billingPeriod": "monthly",
+      "status": "active",
+      "features": {
+        "guest_invites": true,
+        "paid_guest_tokens": true,
+        "advertising": true,
+        "virtual_studio": true,
+        "recording": true,
+        "analytics": true,
+        "multi_operator": true,
+        "HD_streaming": true,
+        "guest_token_pricing": true
+      }
+    },
+    "enterprise": {
+      "id": "enterprise",
+      "name": "Enterprise",
+      "description": "Full platform",
+      "priceMinor": 990000,
+      "currency": "KES",
+      "billingPeriod": "monthly",
+      "status": "active",
+      "features": {
+        "guest_invites": true,
+        "paid_guest_tokens": true,
+        "advertising": true,
+        "virtual_studio": true,
+        "recording": true,
+        "analytics": true,
+        "multi_operator": true,
+        "HD_streaming": true,
+        "advanced_analytics": true,
+        "custom_branding": true,
+        "priority_support": true,
+        "guest_token_pricing": true
+      }
+    }
+  },
+  "subscriptions": {
+    "u1": {
+      "userId": "u1",
+      "planId": "pro",
+      "status": "ACTIVE",
+      "startedAt": 1790616066661,
+      "expiresAt": 1793208066661
+    },
+    "u2": {
+      "userId": "u2",
+      "planId": "pro",
+      "status": "ACTIVE",
+      "startedAt": 1790616066661,
+      "expiresAt": 1793208066661
+    },
+    "admin": {
+      "userId": "admin",
+      "planId": "enterprise",
+      "status": "ACTIVE",
+      "startedAt": 1790616066661,
+      "expiresAt": 1793208066661
+    }
+  },
+  "guestTokens": {
+    "7067d398-8eb6-4f72-817f-960e4ac9e243": {
+      "id": "7067d398-8eb6-4f72-817f-960e4ac9e243",
+      "token": "kocmnRFqMDzukP-ALoYZ685imAP4uWyi",
+      "creatorId": "u1",
+      "broadcastId": "bb-local-broadcast",
+      "priceMinor": 5000,
+      "currency": "KES",
+      "status": "pending_payment",
+      "paymentStatus": "unpaid",
+      "maxUses": 1,
+      "uses": 0,
+      "createdAt": 1790617345857,
+      "expiresAt": 1790703745857,
+      "revokedAt": null
+    },
+    "0882d34b-4bfe-43b3-8da7-49538e0ba004": {
+      "id": "0882d34b-4bfe-43b3-8da7-49538e0ba004",
+      "token": "3CUtQDvoMKKjnLwO-XaSDMdUqlNCX4Rt",
+      "creatorId": "u1",
+      "broadcastId": "bb-local-broadcast",
+      "priceMinor": 5000,
+      "currency": "KES",
+      "status": "active",
+      "paymentStatus": "paid",
+      "maxUses": 1,
+      "uses": 0,
+      "createdAt": 1790617357970,
+      "expiresAt": 1790703757970,
+      "revokedAt": null,
+      "paidAt": 1790617363133,
+      "paymentId": "1155d19a-2fc8-412e-8b4a-21e37d787ca4"
+    }
+  },
+  "withdrawals": {},
+  "destinations": {
+    "c3a3ea14-fc97-4d07-9ae2-16f7d4ca6010": {
+      "id": "c3a3ea14-fc97-4d07-9ae2-16f7d4ca6010",
+      "userId": "u1",
+      "type": "mpesa_phone",
+      "details": {
+        "phone": "+254700000001"
+      },
+      "createdAt": 1790652751218,
+      "availableAt": 1790652750866
+    }
+  },
+  "payments": {
+    "334d87fd-efa3-4f4e-ad30-389ad31a2304": {
+      "id": "334d87fd-efa3-4f4e-ad30-389ad31a2304",
+      "userId": "u1",
+      "provider": "test",
+      "amountMinor": 10000,
+      "currency": "KES",
+      "purpose": "wallet_deposit",
+      "status": "COMPLETED",
+      "reference": "BB-334D87FDEFA3",
+      "metadata": {},
+      "createdAt": 1790616067516,
+      "updatedAt": 1790616068157,
+      "providerRef": "TEST-BB-334D87FDEFA3",
+      "completedAt": 1790616068157
+    },
+    "1155d19a-2fc8-412e-8b4a-21e37d787ca4": {
+      "id": "1155d19a-2fc8-412e-8b4a-21e37d787ca4",
+      "userId": "guest_buyer",
+      "provider": "test",
+      "amountMinor": 5000,
+      "currency": "KES",
+      "purpose": "guest_token",
+      "status": "COMPLETED",
+      "reference": "BB-1155D19A2FC8",
+      "metadata": {
+        "guestTokenId": "0882d34b-4bfe-43b3-8da7-49538e0ba004",
+        "creatorId": "u1",
+        "token": "3CUtQDvoMKKjnLwO-XaSDMdUqlNCX4Rt"
+      },
+      "createdAt": 1790617359284,
+      "updatedAt": 1790617359960,
+      "providerRef": "TEST-BB-1155D19A2FC8",
+      "completedAt": 1790617359960
+    }
+  },
+  "idempotency": {
+    "pay_BB-334D87FDEFA3": {
+      "id": "44e07356-15fe-4a5e-b696-f69f49e4ea0c",
+      "at": 1790616069214
+    },
+    "adtest1_creator": {
+      "id": "37a363c6-84e0-4745-80aa-d638d980f6cc",
+      "at": 1790617142634
+    },
+    "adtest1_platform": {
+      "id": "733db4ab-bf75-41fb-9302-d6e8e094c4a0",
+      "at": 1790617143590
+    },
+    "pay_BB-1155D19A2FC8_rev_creator": {
+      "id": "2c0d6961-ed33-47bc-bbd1-2b6b226c9b67",
+      "at": 1790617360871
+    },
+    "pay_BB-1155D19A2FC8_rev_platform": {
+      "id": "45392863-b416-451e-a7ad-d933a9e310fb",
+      "at": 1790617361793
+    },
+    "gt1790621763123_creator": {
+      "id": "d06e44cc-d918-4db6-8ced-cf73d7a6bb99",
+      "at": 1790621763538
+    },
+    "gt1790621763123_platform": {
+      "id": "38a9a391-e017-45c5-9b2b-49983e5fb438",
+      "at": 1790621764474
+    },
+    "settle_out_u1_1790621765813_600": {
+      "id": "9f8728dc-d4f7-4b5e-bff1-fb8717a82322",
+      "at": 1790621766064
+    },
+    "settle_in_u1_1790621766727_600": {
+      "id": "1b76f980-ced1-4e6c-a52a-7a42172aad92",
+      "at": 1790621767031
+    }
+  },
+  "config": {
+    "minWithdrawalMinor": 10000,
+    "withdrawalFeeMinor": 500,
+    "defaultGuestTokenPriceMinor": 5000,
+    "currency": "KES"
+  },
+  "platformWallet": {
+    "id": "platform",
+    "availableMinor": 2800,
+    "pendingMinor": 0,
+    "totalGuestTokenMinor": 2400,
+    "totalAdMinor": 400,
+    "totalSubscriptionMinor": 0
+  }
+}
